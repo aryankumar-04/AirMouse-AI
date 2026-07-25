@@ -116,24 +116,8 @@ class MouseController:
         try:
             # 3. Execute Mouse Actions via Click Decision State Machine
 
-            # --- HOVER / POINTING (also handles ACTION_NONE for smooth cursor during transient states) ---
-            if action in (ActionIntent.ACTION_HOVER, ActionIntent.ACTION_NONE):
-                if self.state_machine.is_dragging():
-                    self._release_drag()
-                self._last_scroll_y = None
-                self._pinch_active = False
-                self._pinch_cancelled = False
-                self._right_pinch_active = False
-                self._right_click_start_time = 0.0
-
-                if not is_freeze_active:
-                    self._click_freeze_pos = None
-                    self.win32_backend.move_to(screen_x, screen_y)
-                    self.state_machine.set_state(MouseState.MOVE)
-                    self.state_machine.update_cursor_pos(screen_x, screen_y)
-
             # --- LEFT CLICK / DRAG (Click Decision State Machine) ---
-            elif action == ActionIntent.ACTION_PRIMARY_CLICK:
+            if action == ActionIntent.ACTION_PRIMARY_CLICK:
                 self._last_scroll_y = None
                 self._right_click_start_time = 0.0
                 self._right_pinch_active = False
@@ -183,29 +167,27 @@ class MouseController:
                         self.win32_backend.move_to(target_x, target_y)
                         self.state_machine.set_state(MouseState.CLICK_FROZEN)
 
-            # Handle pinch release -> decide between tap-click vs drag release
-            if self._pinch_active and event.state not in (GestureState.PINCH_START, GestureState.PINCH_HOLD):
-                pinch_duration_ms = (now - self._pinch_start_time) * 1000.0
-                drag_duration_threshold = getattr(self.config, 'drag_hold_duration_ms', 280)
-
+            # --- RIGHT CLICK INITIATION ---
+            elif action == ActionIntent.ACTION_SECONDARY_CLICK:
                 if self.state_machine.is_dragging():
-                    # Release drag & drop
                     self._release_drag()
-                elif not self._pinch_cancelled and pinch_duration_ms < drag_duration_threshold and self.click_cooldown.is_ready():
-                    # Quick pinch tap (< hold threshold) -> execute single left click AT frozen hover target
-                    click_x, click_y = self._click_freeze_pos if self._click_freeze_pos else (screen_x, screen_y)
-                    self.win32_backend.move_to(click_x, click_y)
-                    self.win32_backend.click('left')
-                    self.state_machine.set_state(MouseState.CLICKED)
-                    self.state_machine.register_click()
-                    self.click_cooldown.trigger()
-
+                self._last_scroll_y = None
                 self._pinch_active = False
-                self._pinch_cancelled = False
-                self._click_freeze_pos = None
+
+                if event.state in (GestureState.RIGHT_PINCH_START, GestureState.RIGHT_PINCH_HOLD, GestureState.THREE_FINGER):
+                    if not self._right_pinch_active:
+                        self._right_pinch_active = True
+                        self._right_click_start_time = now
+                        # Freeze cursor during right-pinch / three-finger to prevent drift
+                        self._click_freeze_pos = (raw_screen_x, raw_screen_y)
+                        self._click_freeze_time = now
+
+                    # Freeze cursor position while holding right click gesture
+                    target_x, target_y = self._click_freeze_pos if self._click_freeze_pos else (raw_screen_x, raw_screen_y)
+                    self.win32_backend.move_to(target_x, target_y)
 
             # --- SCROLL ---
-            if action == ActionIntent.ACTION_SCROLL:
+            elif action == ActionIntent.ACTION_SCROLL:
                 if self.state_machine.is_dragging():
                     self._release_drag()
                 self._pinch_active = False
@@ -228,32 +210,52 @@ class MouseController:
 
                 self._last_scroll_y = screen_y
 
-            # --- RIGHT CLICK (edge-triggered on release) ---
-            if action == ActionIntent.ACTION_SECONDARY_CLICK:
-                if self.state_machine.is_dragging():
-                    self._release_drag()
-                self._last_scroll_y = None
-                self._pinch_active = False
+            # Handle pinch release -> decide between tap-click vs drag release
+            if self._pinch_active and event.state not in (GestureState.PINCH_START, GestureState.PINCH_HOLD):
+                pinch_duration_ms = (now - self._pinch_start_time) * 1000.0
+                drag_duration_threshold = getattr(self.config, 'drag_hold_duration_ms', 280)
 
-                if event.state in (GestureState.RIGHT_PINCH_START, GestureState.RIGHT_PINCH_HOLD):
-                    if not self._right_pinch_active:
-                        self._right_pinch_active = True
-                        self._right_click_start_time = now
-                        # Freeze cursor during right-pinch to prevent drift
-                        self._click_freeze_pos = (raw_screen_x, raw_screen_y)
-                        self._click_freeze_time = now
+                if self.state_machine.is_dragging():
+                    # Release drag & drop
+                    self._release_drag()
+                elif not self._pinch_cancelled and pinch_duration_ms < drag_duration_threshold and self.click_cooldown.is_ready():
+                    # Quick pinch tap (< hold threshold) -> execute single left click AT frozen hover target
+                    click_x, click_y = self._click_freeze_pos if self._click_freeze_pos else (screen_x, screen_y)
+                    self.win32_backend.move_to(click_x, click_y)
+                    self.win32_backend.click('left')
+                    self.logger.info(f"LEFT CLICK executed at ({click_x}, {click_y})")
+                    self.state_machine.set_state(MouseState.CLICKED)
+                    self.state_machine.register_click()
+                    self.click_cooldown.trigger()
+
+                self._pinch_active = False
+                self._pinch_cancelled = False
+                self._click_freeze_pos = None
 
             # Handle right pinch release -> fire right click
-            if self._right_pinch_active and event.state not in (GestureState.RIGHT_PINCH_START, GestureState.RIGHT_PINCH_HOLD):
+            if self._right_pinch_active and event.state not in (GestureState.RIGHT_PINCH_START, GestureState.RIGHT_PINCH_HOLD, GestureState.THREE_FINGER):
                 if self.right_click_cooldown.is_ready():
                     click_x, click_y = self._click_freeze_pos if self._click_freeze_pos else (screen_x, screen_y)
                     self.win32_backend.move_to(click_x, click_y)
                     self.win32_backend.click('right')
+                    self.logger.info(f"RIGHT CLICK executed at ({click_x}, {click_y})")
                     self.state_machine.set_state(MouseState.CLICKED)
                     self.state_machine.register_click()
                     self.right_click_cooldown.trigger()
                 self._right_pinch_active = False
                 self._click_freeze_pos = None
+
+            # --- HOVER / POINTING (executed when no pinch/right-pinch is actively holding or releasing) ---
+            if action in (ActionIntent.ACTION_HOVER, ActionIntent.ACTION_NONE) and not self._pinch_active and not self._right_pinch_active:
+                if self.state_machine.is_dragging():
+                    self._release_drag()
+                self._last_scroll_y = None
+
+                if not is_freeze_active:
+                    self._click_freeze_pos = None
+                    self.win32_backend.move_to(screen_x, screen_y)
+                    self.state_machine.set_state(MouseState.MOVE)
+                    self.state_machine.update_cursor_pos(screen_x, screen_y)
 
         except pyautogui.FailSafeException:
             self.logger.critical("PyAutoGUI Failsafe triggered! Screen corner hit. Disabling mouse control.")
