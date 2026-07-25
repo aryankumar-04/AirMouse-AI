@@ -44,11 +44,11 @@ Built with a focus on:
 ### Dashboard
 <img src="assets/screenshots/dashboard.png" alt="Dashboard" width="700"/>
 
-### Gesture Guide
-<img src="assets/screenshots/gesture.png" alt="Gesture Guide" width="700"/>
-
 ### Settings
 <img src="assets/screenshots/settings.png" alt="Settings" width="700"/>
+
+### Gesture Guide
+<img src="assets/screenshots/gesture.png" alt="Gesture Guide" width="700"/>
 
 ### About
 <img src="assets/screenshots/about.png" alt="About" width="700"/>
