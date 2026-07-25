@@ -1,6 +1,8 @@
 <div align="center">
 
-# 🖐️ AirMouse AI
+<div align="center"> <img src="assets/logo_64.png" alt="AirMouse AI Logo" width="120"/>
+
+# AirMouse AI
 
 **v1.0.0**
 
