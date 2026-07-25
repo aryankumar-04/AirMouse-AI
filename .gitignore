@@ -1,0 +1,40 @@
+# Python & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual Environment
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Logs & Telemetry
+logs/*.log
+*.log
+!logs/.gitkeep
+
+# PyInstaller & Build Junk
+build/
+dist/
+release/
+
+# IDE & Editor Files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Temp test files
+test_frame.jpg
+scratch/
+*.tmp
+
+# Local User Settings (Keep default baseline settings.json in data/)
+!data/settings.json

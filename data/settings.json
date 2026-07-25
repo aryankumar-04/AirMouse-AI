@@ -1,0 +1,67 @@
+{
+    "camera": {
+        "camera_index": 0,
+        "frame_width": 640,
+        "frame_height": 480,
+        "target_fps": 60,
+        "auto_reconnect": true,
+        "max_reconnect_attempts": 3
+    },
+    "tracking": {
+        "max_num_hands": 2,
+        "min_detection_confidence": 0.9000000000000001,
+        "min_tracking_confidence": 0.4,
+        "model_complexity": 1,
+        "model_path": "models/hand_landmarker.task",
+        "model_url": "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task"
+    },
+    "gesture": {
+        "pinch_threshold": 0.4039073806078147,
+        "pinch_release_threshold": 0.35,
+        "right_pinch_threshold": 0.25,
+        "right_pinch_release_threshold": 0.38,
+        "max_click_velocity": 1.2,
+        "smoothing_alpha": 0.45,
+        "stability_frames": 2,
+        "cooldown_ms": 150,
+        "finger_extension_ratio": 1.0
+    },
+    "calibration": {
+        "padding_x": 0.20101302460202602,
+        "padding_y": 0.20101302460202602,
+        "screen_width": 1920,
+        "screen_height": 1200,
+        "flip_horizontal": false
+    },
+    "mouse": {
+        "enabled": true,
+        "smoothing_factor": 0.2117391304347826,
+        "smoothing_preset": "medium",
+        "one_euro_min_cutoff": 0.6,
+        "one_euro_beta": 0.015,
+        "one_euro_d_cutoff": 1.0,
+        "motion_deadzone_px": 6.357615894039735,
+        "max_cursor_step_px": 150.0,
+        "click_freeze_duration_ms": 300,
+        "click_cooldown_ms": 250,
+        "right_click_cooldown_ms": 400,
+        "right_click_hold_duration_ms": 200,
+        "drag_hold_duration_ms": 250,
+        "double_click_interval_ms": 350,
+        "scroll_sensitivity": 15.0,
+        "speed_acceleration": 1.2,
+        "failsafe": true
+    },
+    "ui": {
+        "window_title": "AirMouse AI - Production Interface",
+        "window_width": 1080,
+        "window_height": 680,
+        "preview_width": 640,
+        "preview_height": 480,
+        "dark_mode": true,
+        "update_interval_ms": 16
+    },
+    "debug_mode": true,
+    "log_level": "INFO",
+    "log_filename": "airmouse_ai.log"
+}
