@@ -1,6 +1,8 @@
 <div align="center">
 
-# 🖐️ AirMouse AI
+<img src="assets/logo_64.png" alt="AirMouse AI Logo" width="96" />
+
+# AirMouse AI
 
 **v1.0.0**
 
@@ -146,7 +148,57 @@ AirMouse-AI/
 
 ---
 
-## 🚀 Installation
+---
+
+# 🚀 Installation
+
+Choose the installation method that best suits your needs.
+
+| Method | Difficulty | Recommended For |
+|---------|------------|-----------------|
+| ⭐ EXE Installer | ⭐ Beginner | Most users |
+| 📦 ZIP Package | ⭐⭐ Intermediate | Users who prefer a portable version |
+| 💻 Build from Source | ⭐⭐⭐ Developers | Developers and contributors |
+
+---
+
+## ⭐ Option 1: EXE Installer (Recommended)
+
+This is the easiest way to use AirMouse AI.
+
+### Steps
+
+1. Go to the **Releases** page.
+2. Download **AirMouse-AI.exe**.
+3. Double-click the installer.
+4. Follow the installation wizard.
+5. Launch **AirMouse AI** from the Desktop or Start Menu.
+6. Allow camera permission if Windows asks.
+
+> **Recommended for most users.**
+>
+> No Python installation or manual setup is required.
+
+---
+
+## 📦 Option 2: Portable ZIP Package
+
+Use this option if you don't want to install the application.
+
+### Steps
+
+1. Download **AirMouse-AI.zip** from the **Releases** page.
+2. Extract the ZIP file.
+3. Open the extracted folder.
+4. Run **AirMouse-AI.exe**.
+
+> This version is portable and does not require installation.
+
+---
+
+## 💻 Option 3: Build from Source
+
+This method is intended for developers who want to modify or contribute to the project.
 
 ### 1. Clone the repository
 
@@ -157,9 +209,18 @@ cd AirMouse-AI
 
 ### 2. Create a virtual environment
 
+**Windows**
+
 ```bash
 python -m venv venv
 venv\Scripts\activate
+```
+
+**macOS / Linux**
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
 ```
 
 ### 3. Install dependencies
@@ -168,11 +229,23 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 4. Run the app
+### 4. Run the application
 
 ```bash
 python main.py
 ```
+
+---
+
+# ✅ Requirements
+
+- Windows 10 or Windows 11
+- Webcam
+- Python 3.10 or later (only for the source version)
+
+---
+
+> 💡 **Tip:** Unless you're planning to develop or modify the project, the **EXE Installer** is the easiest and recommended way to use AirMouse AI.
 
 ---
 
